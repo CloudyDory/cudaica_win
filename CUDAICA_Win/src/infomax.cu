@@ -998,7 +998,7 @@ void infomax(eegdataset_t *dataset) {
 				}
 			} else {
 				if (verbose != 0) {
-					printf("Step %d - lrate %7.9f, wchange %7.9f - time = %lu s\n", step,lrate, h_change, sec);
+					printf("Step %d - lrate %7.9f, wchange %7.9f - time = %lu s\n", step,lrate, h_change, dif);
 				} else {
 					printf("Step %d.\n", step);
 				}
