@@ -18,6 +18,14 @@
  *  along with Cudaica.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* Modification Log
+ *
+ * 1. Use double precision when calculating the mean of each channel.
+ * 
+ * Yunhui Zhou
+ * 2018/09/03
+ */
+
 #include <stdio.h>
 #include <centering.h>
 #include <error.h>
@@ -51,7 +59,7 @@ __shared__ bool isLastBlockFinished; //If true, then last block has finished.
  * sumspitch: sums row size in bytes
  */
 __global__ void getMean(real* data, natural channels, natural samples, size_t pitch, real* sums, size_t sumspitch) {
-	float sum = 0.0;
+	double sum = 0.0;
 	size_t colwidth = pitch/sizeof(real);
 	size_t sumcolwidth = sumspitch/sizeof(real);
 	int count = samples / gridDim.x;	// Process a fraction of a column

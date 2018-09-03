@@ -129,7 +129,7 @@ __global__ void initChannelsVectors(real * bias, natural biasing, int* signs, re
  * u = weigths * data randomly permuted;
  * if (biasing) u += bias;
  * if (! extended)
- * 	y = -tanh(u/2)
+ * 	y = -tanh(u/2);
  * else
  * 	y = tanh(u)
  *
@@ -297,7 +297,6 @@ __global__ void step3(
 	} else {
 		//real sum2 = 0.0;
 		for (i = 0; i < block; i++) {
-			//sum += uchannel[i] * u[threadIdx.x + ucolwidth *i];
 			sum -= (y[threadIdx.x + ycolwidth*i] + u[threadIdx.x + ucolwidth*i]) * uchannel[i];
 		}
 
@@ -422,51 +421,49 @@ __global__ void pdf(
 	size_t kkcolwidth = kkpitch /sizeof(real);
 
 	int swap = blockIdx.x;
-		if (pdfperm) {
-			swap = pdfperm[piter * pdfsize + blockIdx.x];
+	if (pdfperm) {
+		swap = pdfperm[piter * pdfsize + blockIdx.x];
+	}
+	sample[threadIdx.x] = data[threadIdx.x + swap * dcolwidth];
+	
+	__syncthreads();
+
+	for (i = 0; i < channels; i++) {
+		sum += weights[threadIdx.x + i * wcolwidth] * sample[i];
+	}
+
+	sum = sum * sum;
+	kk[blockIdx.x * kkcolwidth + threadIdx.x] = sum;
+	sum = sum * sum;
+	kk[(pdfsize + blockIdx.x) * kkcolwidth + threadIdx.x] = sum;
+	if (threadIdx.x == 0) {
+		natural value = atomicInc(&blocksFinished, gridDim.x);
+		isLastBlockFinished = (value == gridDim.x-1);
+	}
+	__syncthreads();
+	if (isLastBlockFinished) {
+		sum = 0.0;
+		for (i = 0; i < pdfsize; i++) {
+			sum += kk[threadIdx.x + i * kkcolwidth];
+			sum2 += kk[threadIdx.x + (i + pdfsize) * kkcolwidth];
 		}
-		sample[threadIdx.x] = data[threadIdx.x + swap * dcolwidth];
-
-		__syncthreads();
-
-		for (i = 0; i < channels; i++) {
-			sum += weights[threadIdx.x + i * wcolwidth] * sample[i];
+		sum2 = (sum2 * pdfsize / (sum * sum)) - 3.0;
+		if (extmomentum > 0.0) {
+			real okk = old_kk[threadIdx.x];
+			sum2 = (1.0 - extmomentum) * sum2 + extmomentum * okk;
 		}
+		int sign = (sum2 < (-signsbias));
+		if (sign != signs[threadIdx.x]) {
+			atomicInc(&distintos, gridDim.x);
+		}
+		signs[threadIdx.x] = sign;
 
-		sum = sum * sum;
-		kk[blockIdx.x * kkcolwidth + threadIdx.x] = sum;
-		sum = sum * sum;
-		kk[(pdfsize + blockIdx.x) * kkcolwidth + threadIdx.x] = sum;
-
+		kk[threadIdx.x] = sum2;
+		old_kk[threadIdx.x] = sum2;
 		if (threadIdx.x == 0) {
-			natural value = atomicInc(&blocksFinished, gridDim.x);
-			isLastBlockFinished = (value == gridDim.x-1);
+			blocksFinished = 0;
 		}
-		__syncthreads();
-		if (isLastBlockFinished) {
-			sum = 0.0;
-			for (i = 0; i < pdfsize; i++) {
-				sum += kk[threadIdx.x + i * kkcolwidth];
-				sum2 += kk[threadIdx.x + (i + pdfsize) * kkcolwidth];
-			}
-			sum2 = (sum2 * pdfsize / (sum * sum)) - 3.0;
-			if (extmomentum > 0.0) {
-				real okk = old_kk[threadIdx.x];
-				sum2 = (1.0 - extmomentum) * sum2 + extmomentum * okk;
-
-			}
-			int sign = (sum2 < (-signsbias));
-			if (sign != signs[threadIdx.x]) {
-				atomicInc(&distintos, gridDim.x);
-			}
-			signs[threadIdx.x] = sign;
-
-			kk[threadIdx.x] = sum2;
-			old_kk[threadIdx.x] = sum2;
-			if (threadIdx.x == 0) {
-				blocksFinished = 0;
-			}
-		}
+	}
 }
 
 /*
@@ -743,19 +740,12 @@ void infomax(eegdataset_t *dataset) {
 	HANDLE_ERROR(cudaMalloc(&dataperm, intsamples));
 	h_dataperm = (natural*)malloc(intsamples);
 
-	DPRINTF(2, "Pointer address in device: %p\n", dataperm);
-	initperm(nsamples, (natural*) dataperm, h_dataperm);
-
 	/*
 	 * ch x ch matrixes
 	 */
 	DPRINTF(2, "cudaMalloc %lu bytes for weights (weights)\n", chxch);
 	HANDLE_ERROR(cudaMallocPitch(&weights, &wpitch, nchannels * sizeof(real), nchannels));
 	DPRINTF(2, "Pointer address in device: %p\n", weights);
-
-	// DPRINTF(2, "cudaMalloc %lu bytes for tmpweights (tmpweights)\n", chxch);
-	// HANDLE_ERROR(cudaMallocPitch(&tmpweights, &tmpwpitch, nchannels * sizeof(real), nchannels));
-	// DPRINTF(2, "Pointer address in device: %p\n", tmpweights);
 
 	DPRINTF(2, "cudaMalloc %lu bytes for old weights (oldweights)\n", chxch);
 	HANDLE_ERROR(cudaMallocPitch(&oldweights, &oldwpitch, nchannels * sizeof(real), nchannels));
@@ -852,7 +842,7 @@ void infomax(eegdataset_t *dataset) {
 	urextblocks = extblocks;
 
 	time_t start, stepstart, stepend, end;
-	clock_t dif, hour, min, sec;
+	time_t dif, hour, min, sec;
 	time (&start);
 
 	int step = 0;
@@ -904,10 +894,6 @@ void infomax(eegdataset_t *dataset) {
 			step4 <<<nchannels, nchannels, wpitch * sizeof(real) >>> (lrate, nchannels, biasing, bsum, bias, yu, weights, yupitch, wpitch, prevweights, prevweightspitch, prevwtschange, prevwtschangepitch, momentum);
 			CHECK_ERROR();
 			/*
-			// "tmpweights" seems unnecessary.
-			//HANDLE_ERROR(cudaMemcpy2D(tmpweights, tmpwpitch, weights, wpitch, nchannels * sizeof(real), nchannels, cudaMemcpyDeviceToDevice));
-			//HANDLE_CUBLAS_ERROR(cublas(gemm)(handle, transn,transn,nchannels,nchannels,nchannels,&lrate,yu,yupitch/sizeof(real),tmpweights,tmpwpitch/sizeof(real),&alpha,weights,wpitch/sizeof(real)));
-			
 			HANDLE_CUBLAS_ERROR(cublas(gemm)(handle, transn, transn, nchannels, nchannels, nchannels, &lrate, yu, yupitch/sizeof(real), weights, wpitch/sizeof(real), &alpha, weights, wpitch/sizeof(real)));
 
 			if (bias) {
@@ -992,13 +978,13 @@ void infomax(eegdataset_t *dataset) {
 				HANDLE_ERROR(cudaMemcpyFromSymbol(&epsilon, dotResult, sizeof(epsilon)));
 				angledelta = acos(epsilon/sqrt(h_change*h_oldchange));
 				if (verbose != 0) {
-					printf("Step %d - lrate %7.9f, wchange %7.9f, angledelta %4.1f deg - time = %lu s\n",step, lrate, h_change, DEGCONST*angledelta, dif);
+					printf("Step %d - lrate %7.9f, wchange %7.9f, angledelta %4.1f deg - time = %llu s\n",step, lrate, h_change, DEGCONST*angledelta, dif);
 				} else {
 					printf("Step %d.\n", step);
 				}
 			} else {
 				if (verbose != 0) {
-					printf("Step %d - lrate %7.9f, wchange %7.9f - time = %lu s\n", step,lrate, h_change, dif);
+					printf("Step %d - lrate %7.9f, wchange %7.9f - time = %llu s\n", step,lrate, h_change, dif);
 				} else {
 					printf("Step %d.\n", step);
 				}
@@ -1065,7 +1051,7 @@ void infomax(eegdataset_t *dataset) {
 	hour = dif/3600;
 	min = dif/60 % 60;
 	sec = dif % 60;
-	printf("\nElapsed Infomax ICA time: %lu h %lu m %lu s\n", hour, min, sec);
+	printf("\nElapsed Infomax ICA time: %llu h %llu m %llu s\n", hour, min, sec);
 
 	if (dataperm) HANDLE_ERROR(cudaFree(dataperm));
 	dataset->weights = weights;

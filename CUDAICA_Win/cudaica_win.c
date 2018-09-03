@@ -49,6 +49,13 @@
  * [common.cu]
  * 1.Memory allocation to "buffer" and "floatbuffer" change from mapmalloc() to malloc() to fix "\dev\zero" not supported on Windows issue.
  *   Correspondingly, mapfree() is changed to free().
+ * 2. Write data to double precision file.
+ *
+ * [loader.cu]
+ * 1. When reading data, read double precision number because it is now saved in double precision number.
+ *
+ * [centering.cu]
+ * 1. Use double precision when calculating the mean of each channel.
  *
  *   Yunhui Zhou, 2018/08/21
  */
@@ -143,7 +150,6 @@ int main(int argc, char* argv[]) {
 		printf("Centering dataset...");
 		time_t start, end;
 		time(&start);
-		clock_t time1 = clock();
 		centerData(dataset);
 		printf("Done!\n");
 		if (dataset->config.sphering == 1 || dataset->config.sphering == 0) {
@@ -153,20 +159,19 @@ int main(int argc, char* argv[]) {
 		}
 
 		printDatasetInfo(dataset);
-		clock_t time2 = clock();
 		time(&end);
-		clock_t dif = difftime(end, start);
-		clock_t hour = (dif) / 3600;
-		clock_t min = (dif / 60) % 60;
-		clock_t sec = ((dif)) % 60;
-		fprintf(stdout, "Elapsed Pre Processing time: %lu tics = %lu h %lu m %lu s\n", time2 - time1, hour, min, sec);
+		time_t dif = difftime(end, start);
+		time_t hour = (dif) / 3600;
+		time_t min = (dif / 60) % 60;
+		time_t sec = ((dif)) % 60;
+		fprintf(stdout, "Elapsed pre-processing time = %llu h %llu m %llu s\n", hour, min, sec);
 		fprintf(stdout, "====================================\n\n");
 		fprintf(stdout, "====================================\n");
 		fprintf(stdout, " Starting Infomax\n");
 		fprintf(stdout, "====================================\n\n");
 		infomax(dataset);
 
-		// 20180504 Zhou: Do not post-process the weights here in order to be compatitable with pca option.
+		// Do not post-process the weights here in order to be compatitable with pca option.
 		// Post-processing will be done in matlab scipt.
 		//fprintf(stdout, "====================================\n");
 		//fprintf(stdout, " Post processing\n");

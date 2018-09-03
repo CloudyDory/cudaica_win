@@ -22,6 +22,10 @@
  * Modification Log:
  * 1.Memory allocation to "buffer" and "floatbuffer" change from mapmalloc() to malloc() to fix "\dev\zero" not supported on Windows issue.
  *   Correspondingly, mapfree() is changed to free().
+ * 2. Write data to double precision file.
+ * 
+ * Yunhui Zhou
+ * 2018/09/03
  */
 
 #include <stdio.h>
@@ -116,8 +120,10 @@ void dev_matread(char *fname, int rows, int cols, real *mat, size_t pitch) {
 		exit (0);
 	}
 
-	floatbuffer = (float*)mapmalloc(size*sizeof(float));
-	buffer = (real*)mapmalloc(size*sizeof(real));
+	//floatbuffer = (float*)mapmalloc(size*sizeof(float));
+	//buffer = (real*)mapmalloc(size*sizeof(real));
+	floatbuffer = (float*)malloc(size * sizeof(float));
+	buffer = (real*)malloc(size * sizeof(real));
 
 
 	items = (int)fread(floatbuffer,sizeof(float),size,file);
@@ -131,8 +137,10 @@ void dev_matread(char *fname, int rows, int cols, real *mat, size_t pitch) {
 
 	HANDLE_ERROR(cudaMemcpy2D(mat, pitch, buffer, cols*sizeof(real), cols*sizeof(real), rows, cudaMemcpyHostToDevice));
 
-	mapfree(buffer,size*sizeof(real));
-	mapfree(floatbuffer,size*sizeof(float));
+	//mapfree(buffer,size*sizeof(real));
+	//mapfree(floatbuffer,size*sizeof(float));
+	free(buffer);
+	free(floatbuffer);
 
 	fclose(file);
 }
@@ -156,7 +164,8 @@ void dev_matreadInt(char *fname, int rows, int cols, int *mat, size_t pitch) {
 		exit (0);
 	}
 
- 	buffer = (int*)mapmalloc(size*sizeof(int));
+ 	//buffer = (int*)mapmalloc(size*sizeof(int));
+	buffer = (int*)malloc(size * sizeof(int));
 
 	items = (int)fread(buffer,sizeof(int),size,file);
 	if (items != size) {
@@ -166,7 +175,8 @@ void dev_matreadInt(char *fname, int rows, int cols, int *mat, size_t pitch) {
 
 	HANDLE_ERROR(cudaMemcpy2D(mat, pitch, buffer, cols*sizeof(int), cols*sizeof(int), rows, cudaMemcpyHostToDevice));
 
-	mapfree(buffer,size*sizeof(int));
+	//mapfree(buffer,size*sizeof(int));
+	free(buffer);
 
 	fclose(file);
 }
@@ -184,7 +194,7 @@ void dev_matreadInt(char *fname, int rows, int cols, int *mat, size_t pitch) {
 void dev_matwrite(char *fname, int rows, int cols, real *mat, size_t pitch) {
 	FILE *file = fopen(fname,"wb");
 	real *buffer;
-	float *floatbuffer;
+	//float *floatbuffer;
 	int items;
 	int size = rows * cols;
 	if (!file) {
@@ -192,15 +202,16 @@ void dev_matwrite(char *fname, int rows, int cols, real *mat, size_t pitch) {
 		exit (0);
 	}
 	// buffer = (real*)mapmalloc(size*sizeof(real));  // This line cause error
-	buffer = (real*)malloc(size * sizeof(real));  // This line cause error
+	buffer = (real*)malloc(size * sizeof(real)); 
 	DPRINTF(2, "Copying %d by %d cols from %p to %p\n", rows, cols, mat, buffer);
 	HANDLE_ERROR(cudaMemcpy2D(buffer, cols*sizeof(real), mat, pitch, cols*sizeof(real), rows, cudaMemcpyDeviceToHost));
 	//floatbuffer = (float*)mapmalloc(size*sizeof(float));
-	floatbuffer = (float*)malloc(size * sizeof(float));
-	for (int i = 0; i < size; i++){
-		floatbuffer[i] = (float) buffer[i];
-	}
-	items = (int)fwrite(floatbuffer,sizeof(float),size,file);
+	//floatbuffer = (float*)malloc(size * sizeof(float));
+	//for (int i = 0; i < size; i++){
+	//	floatbuffer[i] = (float) buffer[i];
+	//}
+	//items = (int)fwrite(floatbuffer,sizeof(float),size,file);
+	items = (int)fwrite(buffer, sizeof(real), size, file);
 	if (items != size) {
 		printf("invalid number of elements\n");
 		exit (0);
@@ -208,9 +219,9 @@ void dev_matwrite(char *fname, int rows, int cols, real *mat, size_t pitch) {
 
 	//mapfree(floatbuffer, size*sizeof(float));
 	//mapfree(buffer,size*sizeof(real));
-	free(floatbuffer);
+	//free(floatbuffer);
 	free(buffer);
-	floatbuffer = NULL;
+	//floatbuffer = NULL;
 	buffer = NULL;
 
 	fclose(file);
@@ -236,7 +247,9 @@ void dev_matwriteInt(char *fname, int rows, int cols, int *mat, size_t pitch) {
 		printf("open failed\n");
 		exit (0);
 	}
-	buffer = (int*)mapmalloc(size*sizeof(int));
+	// buffer = (int*)mapmalloc(size*sizeof(int));
+	buffer = (int*)malloc(size * sizeof(int));
+
 	HANDLE_ERROR(cudaMemcpy2D(buffer, cols*sizeof(int), mat, pitch, cols*sizeof(int), rows, cudaMemcpyDeviceToHost));
 	items = (int)fwrite(buffer,sizeof(int),size,file);
 	if (items != size) {
@@ -244,9 +257,8 @@ void dev_matwriteInt(char *fname, int rows, int cols, int *mat, size_t pitch) {
 		exit (0);
 	}
 
-
-	mapfree(buffer,size*sizeof(int));
-
+	//mapfree(buffer,size*sizeof(int));
+	free(buffer);
 
 	fclose(file);
 }
@@ -271,7 +283,9 @@ void dev_matwriteNat(char *fname, int rows, int cols, natural *mat, size_t pitch
 		printf("open failed\n");
 		exit (0);
 	}
-	buffer = (natural*)mapmalloc(size*sizeof(natural));
+	//buffer = (natural*)mapmalloc(size*sizeof(natural));
+	buffer = (natural*)malloc(size * sizeof(natural));
+
 	HANDLE_ERROR(cudaMemcpy2D(buffer, cols*sizeof(natural), mat, pitch, cols*sizeof(natural), rows, cudaMemcpyDeviceToHost));
 	items = (natural)fwrite(buffer,sizeof(natural),size,file);
 	if (items != size) {
@@ -279,9 +293,8 @@ void dev_matwriteNat(char *fname, int rows, int cols, natural *mat, size_t pitch
 		exit (0);
 	}
 
-
-	mapfree(buffer,size*sizeof(int));
-
+	//mapfree(buffer,size*sizeof(int));
+	free(buffer);
 
 	fclose(file);
 }

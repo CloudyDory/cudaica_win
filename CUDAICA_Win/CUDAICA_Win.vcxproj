@@ -68,7 +68,8 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <GenerateLineInfo>true</GenerateLineInfo>
-      <CodeGeneration>compute_30,sm_30;%(CodeGeneration)</CodeGeneration>
+      <CodeGeneration>compute_61,sm_61;%(CodeGeneration)</CodeGeneration>
+      <HostDebugInfo>true</HostDebugInfo>
     </CudaCompile>
     <PostBuildEvent>
       <Command>

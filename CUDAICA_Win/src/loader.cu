@@ -18,6 +18,13 @@
  *  along with Cudaica.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* Modification Log
+ *
+ * 1. When reading data, read double precision number because it is now saved in double precision number.
+ *
+ * Yunhui Zhou
+ * 2018/09/03
+ */
 
 #include <loader.h>
 #include <string.h>
@@ -56,7 +63,8 @@ error dataload(char* src, natural rows, natural cols, real** dst) {
 	}
 	void *mmaping = mmap(0, sb.st_size, PROT_READ, MAP_SHARED, fd, 0);
 	size_t map_size = sb.st_size;
-	float *matriz = (float*)mmaping;
+	// float *matriz = (float*)mmaping;
+	double *matriz = (double*)mmaping;  // Read double-precision data
 	if (matriz == MAP_FAILED) {
 		fprintf(stderr, "Error mapping data file %s\n", src);
 		return ERRORNOFILE;
