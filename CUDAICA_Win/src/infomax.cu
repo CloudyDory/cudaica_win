@@ -985,12 +985,8 @@ void infomax(eegdataset_t *dataset) {
 				}
 			}
 		} else {
-			if (verbose != 0) {
-				printf(ERASE_STRING);
-				printf("Step %d [ BLOWUP! ]\n", step+1);
-			} else {
-				printf("Step %d [ BLOWUP! ]", step+1);
-			}
+			printf("Step %d [ BLOWUP! ]\n\n", step + 1);
+
 			step = 0;
 			h_change = nochange;
 			h_weights_blowup = 0;
