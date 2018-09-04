@@ -57,7 +57,7 @@
  * [centering.cu]
  * 1. Use double precision when calculating the mean of each channel.
  *
- *   Yunhui Zhou, 2018/08/21
+ *   Yunhui Zhou. 2018/08/21
  */
 
 #include <stdio.h>

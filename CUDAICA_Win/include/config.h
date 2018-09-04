@@ -101,6 +101,13 @@ typedef int error;
 #define DEFAULT_BLOWUP_FAC     	0.8
 #define DEFAULT_RESTART_FAC    	0.9
 
+/* get absolute values*/
+#ifdef USESINGLE
+#define absolute(X) fabsf(##X)
+#else
+#define absolute(X) fabs(##X)
+#endif
+
  /* Extended options*/
 #define DEFAULT_NSUB           	1
 #define DEFAULT_EXTBLOCKS      	1

@@ -25,6 +25,8 @@
  *  4. Remove "cudaDeviceSynchronize()" as it is unnecessary.
  *  5. Remove "tmpweights" and "tmpwpitch". as they are unnecessary
  *  6. Add some header files.
+ *  7. Fix a bug in checking whether weight has blowup. Previously it just check the maximum element in weight matrix. Now 
+ *     it checks the maximum of absolute values.
  *
  *  Yunhui Zhou, 2018/08/21
  */
@@ -295,7 +297,6 @@ __global__ void step3(
 		}
 		yu[threadIdx.x + yucolwidth * blockIdx.x] = sum; //stores again in column major order
 	} else {
-		//real sum2 = 0.0;
 		for (i = 0; i < block; i++) {
 			sum -= (y[threadIdx.x + ycolwidth*i] + u[threadIdx.x + ucolwidth*i]) * uchannel[i];
 		}
@@ -370,7 +371,9 @@ __global__ void step3(
 		sum = weights[threadIdx.x + blockIdx.x * wcolwidth];
 	}
 
-	if (sum > MAX_WEIGHT) weights_blowup = 1;
+	if (absolute(sum) > MAX_WEIGHT) {
+		weights_blowup = 1;
+	}
 
 	/*
 	 * Only block 0 calculates
@@ -580,7 +583,7 @@ __global__ void matScale(real *a, natural arowsize, real *b, natural browsize, r
 }
 
 __global__ void getBlowup(real *weights, natural wrowsize) {
-	if (weights[threadIdx.x + blockIdx.x * wrowsize] > MAX_WEIGHT) atomicInc(&weights_blowup, threadIdx.x + blockIdx.x * wrowsize);
+	if (absolute(weights[threadIdx.x + blockIdx.x * wrowsize]) > MAX_WEIGHT) atomicInc(&weights_blowup, threadIdx.x + blockIdx.x * wrowsize);
 }
 
 
@@ -610,7 +613,6 @@ void infomax(eegdataset_t *dataset) {
 	size_t upitch;
 	size_t yupitch;
 	size_t wpitch;
-	// size_t tmpwpitch;
 	size_t startwpitch;
 	size_t oldwpitch;
 	size_t kkpitch;
@@ -712,7 +714,6 @@ void infomax(eegdataset_t *dataset) {
 	real * weights = NULL;
 	real * oldweights = NULL;
 	real * startweights = NULL;
-	// real * tmpweights = NULL;
 	real * bias = NULL;
 	real * bsum = NULL;
 	int * signs = NULL;
@@ -859,7 +860,7 @@ void infomax(eegdataset_t *dataset) {
 		for (t = 0; t < nsamples - block && !h_weights_blowup; t += block) {
 			DPRINTF(3, "Starting step\n", numblocks);
 			DPRINTF(3, "Step 1\n", numblocks);
-			step1<<<block, nchannels, nchannels*sizeof(real), 0>>>(channels, extended, t, weights, data, u, y, dataperm, biasing, bias, wpitch, pitch, upitch, ypitch);
+			step1<<<block, nchannels, nchannels*sizeof(real)>>>(channels, extended, t, weights, data, u, y, dataperm, biasing, bias, wpitch, pitch, upitch, ypitch);
 			CHECK_ERROR();
 			DPRINTF(3, "Step 1 end\n", numblocks);
 			if (extended || biasing) {
@@ -871,7 +872,7 @@ void infomax(eegdataset_t *dataset) {
 			}
 
 
-			// STEP 3 changed for CUBLAS function calls (Now switch it back for speed)
+			// STEP 3 
 			DPRINTF(3, "Step 3\n");
  			step3<<<nchannels, nchannels, block*sizeof(real)>>>(extended, channels, block, u, y, yu, upitch, ypitch, yupitch);
  			CHECK_ERROR();
@@ -889,34 +890,29 @@ void infomax(eegdataset_t *dataset) {
 			*/
 			DPRINTF(3, "Step 3 end\n");
 
+			// STEP 4 
 			DPRINTF(3, "Step 4\n", numblocks);
-			// Using custom CUDA kernel seems to be fastest.
 			step4 <<<nchannels, nchannels, wpitch * sizeof(real) >>> (lrate, nchannels, biasing, bsum, bias, yu, weights, yupitch, wpitch, prevweights, prevweightspitch, prevwtschange, prevwtschangepitch, momentum);
 			CHECK_ERROR();
+			
 			/*
 			HANDLE_CUBLAS_ERROR(cublas(gemm)(handle, transn, transn, nchannels, nchannels, nchannels, &lrate, yu, yupitch/sizeof(real), weights, wpitch/sizeof(real), &alpha, weights, wpitch/sizeof(real)));
-
 			if (bias) {
 				HANDLE_CUBLAS_ERROR(cublas(axpy)(handle, nchannels,&lrate,bsum,inc,bias,inc));
 			}
-
-			/******************************** Add momentum *******************************
+			// Add momentum 
 			if (momentum > 0.0) {
 				HANDLE_CUBLAS_ERROR(cublas(axpy)(handle, chxch, &momentum,prevwtschange,inc,weights,inc));
 				matScale<<<nchannels, nchannels>>>(weights, wpitch/sizeof(real), prevweights, prevweightspitch/sizeof(real), prevwtschange, prevwtschangepitch/sizeof(real), -1.0);
 				CHECK_ERROR();
 
 				HANDLE_ERROR(cudaMemcpy2D(prevweights, prevweightspitch, weights, wpitch, nchannels * sizeof(real), nchannels, cudaMemcpyDeviceToDevice));
-			}*/
+			}
+			getBlowup << <nchannels, nchannels >> >(weights, wpitch / sizeof(real));
+			CHECK_ERROR();
 			DPRINTF(3, "Step 4 end\n", numblocks);
+			*/
 
-
-			/*
-			 * Wait till step 4 finishes and check weigths_blowup;
-			 */
-			//getBlowup<<<nchannels, nchannels>>>(weights, wpitch/sizeof(real));
-			//CHECK_ERROR();
-			//HANDLE_ERROR(cudaDeviceSynchronize());
 			//HANDLE_ERROR(cudaMemcpyFromSymbol(&h_weights_blowup, SYMBOL(weights_blowup), sizeof(h_weights_blowup), 0, cudaMemcpyDeviceToHost));
 			//HANDLE_ERROR(cudaMemcpyToSymbol(SYMBOL(weights_blowup), &zero, sizeof(zero), 0, cudaMemcpyHostToDevice));
 			HANDLE_ERROR(cudaMemcpyFromSymbol(&h_weights_blowup, weights_blowup, sizeof(h_weights_blowup), 0, cudaMemcpyDeviceToHost));
@@ -952,7 +948,6 @@ void infomax(eegdataset_t *dataset) {
 				}
 				piter++;
 				pleft -= pdfsize;
-
 			}
 			blockno++;
 

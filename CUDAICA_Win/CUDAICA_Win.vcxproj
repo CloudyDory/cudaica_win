@@ -96,7 +96,7 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <CodeGeneration>compute_30,sm_30;compute_35,sm_35;compute_37,sm_37;compute_50,sm_50;compute_52,sm_52;compute_60,sm_60;compute_61,sm_61</CodeGeneration>
-      <FastMath>true</FastMath>
+      <FastMath>false</FastMath>
     </CudaCompile>
     <PostBuildEvent>
       <Command>
@@ -129,7 +129,9 @@
   <ItemGroup>
     <CudaCompile Include="src\centering.cu" />
     <CudaCompile Include="src\common.cu" />
-    <CudaCompile Include="src\config.cu" />
+    <CudaCompile Include="src\config.cu">
+      <FastMath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</FastMath>
+    </CudaCompile>
     <CudaCompile Include="src\device.cu" />
     <CudaCompile Include="src\error.cu" />
     <CudaCompile Include="src\infomax.cu" />
