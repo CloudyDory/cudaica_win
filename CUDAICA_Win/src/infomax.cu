@@ -162,8 +162,9 @@ __global__ void step1(
 	size_t ycolwidth = ypi/sizeof(real);
 	natural swap = dataperm[t + blockIdx.x];
 	//TODO: This makes	four 32B accesses instead of two 64B access. Why?
-	real thissample = data[swap * colwidth + threadIdx.x];	//Copy data into local memory.
-	sample[threadIdx.x] = thissample;
+	//real thissample = data[swap * colwidth + threadIdx.x];	//Copy data into local memory.
+	//sample[threadIdx.x] = thissample;
+	sample[threadIdx.x] = data[swap * colwidth + threadIdx.x];
 	__syncthreads();
 
 	real value = 0.0;
