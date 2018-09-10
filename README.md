@@ -4,7 +4,16 @@ CUDAICA on Windows.
 The source code is adapted from <https://github.com/fraimondo/cudaica> to build under Windows.
 
 ## Requirements
-NVIDAI GPU with enough GPU Memory.
+
+1. NVIDIA GPU with enough GPU Memory (> 4GB recommend, depend on your data size).
+
+2. NVIDIA CUDA
+
+3. Intel MKL in Intel Parallel Studio XE
+
+4. Microsoft Visual Studio supported by CUDA and MKL above. (Optional, only necessary if you need to build by yourself. I build it with Microsoft Visual Studio 15.6.7, with CUDA 9.2 and Intel Parallel Studio XE 2018 Update 3).
+
+5. EEGLAB with MATLAB
 
 ## How to use
 
@@ -17,14 +26,8 @@ After installation, I recommend to do a numerical test to show that CUDAICA and 
 
 **Option 2. Build the source code**
 
-Dependencies:
+Install all softwares in the requirements section.
 
-1. NVIDIA CUDA (current latest v9.2) (free).
-
-2. Intel MKL in Intel Parallel Studio XE (current latest 2018 update 3) (free for student).
-
-3. Microsoft visual studio supported by both above (current 15.6.7, latest one may not be supported).
-
-It will only compile "cudaica_win.exe". You still need other files in "EEGLAB_Plugin" folder to run it.
+The source code will only compile "cudaica_win.exe". You still need other files in "EEGLAB_Plugin" folder to run it.
 
 Last change: 2018/09/10
