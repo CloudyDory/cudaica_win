@@ -1,7 +1,10 @@
 The programs in this folder demonstrates that CUDAICA and RunICA should behave the same if they use the same random number generator and block separation method.
 
 1. (Optional) Compile the random number generator used by RunICA.
-   Please skip to step 2 first. If the following step fails because of the mex files provided here, recompile them. To do this, you need to have a supported C compiler in Matlab, and run "mexcompile.m".
+   Please skip to step 3 first. If the following step fails because of the mex files provided here, recompile them. To do this, you need to have a supported C compiler in Matlab, and run "mexcompile.m".
+
+2. (Optional) Compile CUDAICA with fixed random number generator
+   Please skip to step 3 first. If the following step fails because of the CUDAICA_Win_Text.exe file provided here, recompile it. To do this, search for "set->config.seed = (int)time(NULL);" in the source code file "config.cu" (should be near line 500), and change it to "set->config.seed = (int)1;". Recompile the project.
 
 2. Install CudaICA1.0 plugin to EEGLAB folder. Override or modify default "icadefs.m" and "pop_runica.m" in EEGLAB according to the readme there.
 
