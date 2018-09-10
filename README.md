@@ -15,6 +15,9 @@ The source code is adapted from <https://github.com/fraimondo/cudaica> to build 
 
 5. EEGLAB with MATLAB
 
+6. Add MKL library directory in system path. (directory is the same or similar to “C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\redist\intel64\mkl”)
+
+
 ## How to use
 
 **Option 1. Use pre-built binary**
