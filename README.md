@@ -11,7 +11,7 @@ The source code is adapted from <https://github.com/fraimondo/cudaica> to build 
 
 3. Intel MKL in Intel Parallel Studio XE
 
-4. Microsoft Visual Studio supported by CUDA and MKL above. (Optional, only necessary if you need to build by yourself. I build it with Microsoft Visual Studio 15.6.7, with CUDA 9.2 and Intel Parallel Studio XE 2018 Update 3).
+4. (Optional) Microsoft Visual Studio supported by CUDA and MKL above. (Only necessary if you need to build the executable by yourself. I build it with Microsoft Visual Studio 15.6.7, with CUDA 9.2 and Intel Parallel Studio XE 2018 Update 3).
 
 5. EEGLAB with MATLAB
 
