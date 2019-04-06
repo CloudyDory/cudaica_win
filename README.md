@@ -3,6 +3,9 @@ CUDAICA on Windows.
 
 The source code is adapted from <https://github.com/fraimondo/cudaica> to build under Windows.
 
+[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
+[![Badge](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu/)
+
 ## Requirements
 
 1. NVIDIA GPU with enough GPU Memory (> 4GB recommend, depend on your data size).
