@@ -268,19 +268,19 @@ end
 % insert name of data files, chans and frames
 for x=1:length(flags)
     if strcmp(flags{x},'DataFile')
-        datafile = [pwd, filesep, datafile];
+        datafile = fullfile(pwd, datafile);
         args{x} = datafile;
     elseif strcmp(flags{x},'WeightsOutFile')
         weightsfile = ['cudaica' tmpint '.wts'];
-        weightsfile =  [pwd, filesep, weightsfile];
+        weightsfile = fullfile(pwd, weightsfile);
         args{x} = weightsfile;
     elseif strcmp(flags{x},'WeightsTempFile')
         weightsfile = ['cudaicatmp' tmpint '.wts'];
-        weightsfile =  [pwd, filesep, weightsfile];
+        weightsfile = fullfile(pwd, weightsfile);
         args{x} = weightsfile;
     elseif strcmp(flags{x},'SphereFile')
         spherefile = ['cudaica' tmpint '.sph'];
-        spherefile =  [pwd, filesep, spherefile];
+        spherefile = fullfile(pwd, spherefile);
         args{x} = spherefile;
     elseif strcmp(flags{x},'chans')
         args{x} = int2str(nchans);
