@@ -1,4 +1,4 @@
-# cudaica_win
+﻿# cudaica_win
 CUDAICA on Windows.
 
 The source code is adapted from <https://github.com/fraimondo/cudaica> to build under Windows.
@@ -12,13 +12,11 @@ The source code is adapted from <https://github.com/fraimondo/cudaica> to build 
 
 2. NVIDIA CUDA
 
-3. Intel MKL in Intel Parallel Studio XE
+3. Intel Math Kernel Library
 
-4. (Optional) Microsoft Visual Studio supported by CUDA and MKL above. (Only necessary if you need to build the executable by yourself. I build it with Microsoft Visual Studio 15.6.7, with CUDA 9.2 and Intel Parallel Studio XE 2018 Update 3).
+4. EEGLAB with MATLAB
 
-5. EEGLAB with MATLAB
-
-6. Add MKL library directory in system path of Windows environment variables. (directory is the same or similar to “C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\redist\intel64\mkl”)
+5. Add MKL library directory in system path of Windows environment variables. (directory is the same or similar to “C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\redist\intel64\mkl”)
 
 
 ## How to use
@@ -34,6 +32,8 @@ After installation, I recommend to do a numerical test to show that CUDAICA and 
 
 Install all softwares in the requirements section.
 
+Install Microsoft Visual Studio supported by CUDA and MKL above. (Only necessary if you need to build the executable by yourself. I build it with Microsoft Visual Studio 15.6.7, with CUDA 9.2 and Intel Math Kernel Library 2018 Update 3).
+
 The source code will only compile "cudaica_win.exe". You still need other files in "EEGLAB_Plugin" folder to run it.
 
-Last change: 2018/09/10
+Last change: 2019/08/28
