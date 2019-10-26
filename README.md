@@ -36,4 +36,15 @@ Install Microsoft Visual Studio supported by CUDA and MKL above. (Only necessary
 
 The source code will only compile "cudaica_win.exe". You still need other files in "EEGLAB_Plugin" folder to run it.
 
-Last change: 2019/08/28
+## Tested environment
+
+CUDAICA for Windows has been tested in the following machine environment:
+
+1. Windows 10 1809, NVIDIA GTX 1050Ti, CUDA 10.1
+2. Windows 10 1809, NVIDIA GTX 1080Ti, CUDA 10.1
+3. Windows 7 sp1, NVIDIA RTX 2070, CUDA 10.1
+4. Windows Server 2019, NVIDIA GTX 1070, CUDA 10.1
+5. Windows 10 1809, NVIDIA RTX 2080, CUDA 10.1
+6. Windows 10 1903, NVIDIA GTX 1660Ti, CUDA 10.1
+
+Last change: 2019/10/26
