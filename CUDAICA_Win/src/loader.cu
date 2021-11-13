@@ -21,9 +21,10 @@
 /* Modification Log
  *
  * 1. When reading data, read double precision number because it is now saved in double precision number.
+ * 2. Support reading data file larger than 4 GB.
  *
  * Yunhui Zhou
- * 2018/09/03
+ * 2021/11/13
  */
 
 #include <loader.h>
@@ -56,8 +57,8 @@ error dataload(char* src, natural rows, natural cols, real** dst) {
 		fprintf(stderr, "Error opening data file (%d) %s - %s\n", errno, strerror(errno), src);
 		return ERRORNOFILE;
 	}
-	struct stat sb;
-	if (fstat(fd, &sb) == -1) {
+	struct _stat64 sb;
+	if (_fstat64(fd, &sb) == -1) {
 		fprintf(stderr, "Error stating data file %s\n", src);
 		return ERRORNOFILE;
 	}

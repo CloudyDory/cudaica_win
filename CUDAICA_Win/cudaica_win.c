@@ -53,11 +53,12 @@
  *
  * [loader.cu]
  * 1. When reading data, read double precision number because it is now saved in double precision number.
+ * 2. Support reading data file larger than 4 GB.
  *
  * [centering.cu]
  * 1. Use double precision when calculating the mean of each channel.
  *
- *   Yunhui Zhou. 2018/08/21
+ *   Yunhui Zhou. 2021/11/13
  */
 
 #include <stdio.h>
