@@ -252,7 +252,7 @@ try
         sphere = myfloatread(Args.SphereFile,[nchans,Inf],'native',0,'double');
     end
 catch
-    error('Cannot read result file. CUDAICA probably failed because of insufficient GPU memory.');
+    error('Cannot read the result file. Please make sure you have installed NVIDIA CUDA and Intel MKL (or oneAPI), correctly set the environment variables, and have sufficient GPU memory.');
 end
 if isempty(weights)
     error('Cannot read weight matrix!');

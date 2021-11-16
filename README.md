@@ -24,12 +24,13 @@ Please download "EEGLAB_Plugin" folder, and follow the readme file in CudaICA1.0
 
 After installation, I recommend to do a numerical test to show that CUDAICA and EEGLAB's RUNICA should behave the same when the randomness in the algorithm are controlled. The detailed steps are in the "numerical_test" folder.
 
+Note: Microsoft Visual Studio is NOT needed if you use the pre-built binary.
 
 **Option 2: Build the source code**
 
 Install all softwares in the requirements section.
 
-Install Microsoft Visual Studio supported by CUDA and MKL above (only necessary if you need to build the executable by yourself).
+Install Microsoft Visual Studio supported by CUDA and MKL above.
 
 Tested build environment:
 1. Microsoft Visual Studio 15.6.7,  CUDA 9.2,  Intel Math Kernel Library 2018 Update 3.
