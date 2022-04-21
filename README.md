@@ -9,7 +9,7 @@ The source code is adapted from <https://github.com/fraimondo/cudaica> to build 
 
 2. NVIDIA CUDA
 
-3. Intel Math Kernel Library (Note: Intel has changed many .dll files in the new OneAPI starting from year 2021. CUDAICA_win is not fully upgraded to support these changes now, but it is fully compatitable with the old Intel Parallel Studio XE or Intel Math Kernel Library 2020.)
+3. Intel Math Kernel Library (Note: Intel has changed many .dll files in the new OneAPI starting from year 2021. CUDAICA_win does not support these changes now, but it is fully compatitable with the old Intel Parallel Studio XE or Intel Math Kernel Library 2020.)
 
 4. EEGLAB with MATLAB
 
