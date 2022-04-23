@@ -11,7 +11,7 @@ The source code is adapted from <https://github.com/fraimondo/cudaica> to build 
 
 3. Intel Math Kernel Library 
    
-   Note: Intel has changed many .dll files in the new OneAPI starting from year 2021, but CUDAICA_Win does not support these changes now, you have to rename serval .dll file to make it work.
+   Note: Intel has changed many .dll files in the new OneAPI base toolkit starting from year 2021, but CUDAICA_Win does not support these changes now, you have to rename several .dll files to make it work. 
    
    CUDAICA_Win is fully compatitable with the old Intel Parallel Studio XE or Intel Math Kernel Library 2020. Only the MKL part in Intel Parallel Studio XE is needed.
 
