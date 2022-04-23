@@ -10,13 +10,17 @@ The source code is adapted from <https://github.com/fraimondo/cudaica> to build 
 2. NVIDIA CUDA
 
 3. Intel Math Kernel Library 
+   
    Note: Intel has changed many .dll files in the new OneAPI starting from year 2021, but CUDAICA_Win does not support these changes now, you have to rename serval .dll file to make it work.
-   CUDAICA is fully compatitable with the old Intel Parallel Studio XE or Intel Math Kernel Library 2020. Only the MKL part in Intel Parallel Studio XE is needed.
+   
+   CUDAICA_Win is fully compatitable with the old Intel Parallel Studio XE or Intel Math Kernel Library 2020. Only the MKL part in Intel Parallel Studio XE is needed.
 
 4. EEGLAB with MATLAB
 
 5. Add MKL library directory in system path of Windows environment variables. 
+
    If you install the old Intel Parallel Studio XE or Intel MKL 2020 in the default location, the directory should be: “C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\redist\intel64\mkl”.
+   
    If you install the new Intel OneAPI base toolkit in the default location, the directory should be: "C:\Program Files (x86)\Intel\oneAPI\mkl\<version number>\redist\intel64"
 
 
