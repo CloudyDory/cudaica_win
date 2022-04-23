@@ -678,12 +678,12 @@ void infomax(eegdataset_t *dataset) {
 	/*
 	 * Variables for CUBLAS
 	 */
-	real alpha = 1.0, beta = 0.0, gamma = -1.0;
-	cublasFillMode_t uplo = CUBLAS_FILL_MODE_UPPER;
-	cublasOperation_t transn = CUBLAS_OP_N;
-	cublasOperation_t transt = CUBLAS_OP_T;
+	//real alpha = 1.0, beta = 0.0, gamma = -1.0;
+	//cublasFillMode_t uplo = CUBLAS_FILL_MODE_UPPER;
+	//cublasOperation_t transn = CUBLAS_OP_N;
+	//cublasOperation_t transt = CUBLAS_OP_T;
 	//cublasHandle_t handle;
-	int inc = 1;
+	//int inc = 1;
 
 	//HANDLE_CUBLAS_ERROR(cublasCreate(&handle));
 

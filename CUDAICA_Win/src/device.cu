@@ -116,7 +116,7 @@ natural getMaxBlocks() {
  */
 void recalcFreeMem(size_t elemspercolumn) {
 	size_t mfree;
-	size_t step;
+	// size_t step;
 	size_t total;
 	HANDLE_ERROR(cudaMemGetInfo(&mfree, &total));
 	DPRINTF(1, "Informed free memory %llu - total %llu\n", mfree, total);
