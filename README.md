@@ -20,6 +20,8 @@ The source code is adapted from <https://github.com/fraimondo/cudaica> to build 
    If you install the old Intel Parallel Studio XE or Intel MKL 2020 in the default location, the directory should be: “C:\Program Files (x86)\IntelSWTools\compilers_and_libraries\windows\redist\intel64\mkl”.
    
    If you install the new Intel OneAPI base toolkit in the default location, the directory should be: "C:\Program Files (x86)\Intel\oneAPI\mkl\latest\redist\intel64"
+   
+   Note: “cudaica.m” automatically detects whether the Windows system path contains “IntelSWTools” or “oneAPI”, and selects the correct cudaica binary exe file to use. Please make sure your Intel MKL installation path contains one of the above two patterns.
 
 
 ## How to use
