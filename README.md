@@ -8,10 +8,16 @@ The source code is adapted from <https://github.com/fraimondo/cudaica> to build 
 1. NVIDIA GPU with enough GPU Memory (> 4GB recommend, depending on your data size).
 
 2. NVIDIA CUDA
+   
+   For normal users (recommeded for most people): Install only the CUDA runitme and latest drivers.
+   
+   For developers who need to compile the source code: Install CUDA runtime, CUDA development and latest drivers.
 
 3. Intel Math Kernel Library
    
    Both the old Intel Parallel Studio XE/Intel Math Kernel Library 2020 and the new Intel OneAPI base toolkit are supported.
+   
+   Only MKL is needed, there is no need to install other components for both normal users and developers.
 
 4. EEGLAB with MATLAB
 
