@@ -46,16 +46,16 @@ Note:
 
 **Option 2: Build the source code**
 
-Install all softwares in the requirements section.
+Install Microsoft Visual Studio supported by CUDA and MKL first. Note: the latest Visual Studio is not always supported by CUDA and MKL. Check the documents of CUDA and MKL before you install visual studio.
 
-Install Microsoft Visual Studio supported by CUDA and MKL above.
+Install all softwares in the requirements section. Make sure to install visual studio integration in CUDA and MKL.
 
 Tested build environment:
 1. Microsoft Visual Studio 15.6.7,  CUDA 9.2,  Intel Math Kernel Library 2018 Update 3
 2. Microsoft Visual Studio 16.11.6, CUDA 11.5, Intel Math Kernel Library 2020 Update 4
 3. Microsoft Visual Studio 17.1.5,  CUDA 11.6, Intel OneAPI base toolkit 2022
 
-The source code will only compile "cudaica_win.exe". You still need other files in "EEGLAB_Plugin" folder to run it.
+The source code will only compile "cudaica_win_*.exe". You still need other files in "EEGLAB_Plugin" folder to run it.
 
 ## Tested environment
 
