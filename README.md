@@ -80,6 +80,6 @@ CUDAICA for Windows has been tested in the following machine environment:
 5. Windows 10 1809, NVIDIA RTX 2080, CUDA 10.1
 6. Windows 10 21H1, NVIDIA RTX 2080 Super, CUDA 11.5
 7. Windows 10 21H2, NVIDIA GTX 1050Ti, CUDA 11.6
-8. Windows 11 21H2, NVIDIA RTX 3070Ti, CUDA 11.7
+8. Windows 11 21H2, NVIDIA RTX 3070Ti Laptop, CUDA 11.7
 
 Last change: 2022/08/15
