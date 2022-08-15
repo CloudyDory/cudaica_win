@@ -46,7 +46,7 @@ The source code is adapted from <https://github.com/fraimondo/cudaica> to build 
 
 **Option 1: Use pre-built binary**
 
-Please download "EEGLAB_Plugin" folder, and follow the readme file in CudaICA1.1 folder. You need to replace or modify EEGLAB's default "pop_runica,m" to let CUDAICA be callable from GUI and command line. It should run under Windows 10 and Windows 7.
+Please download "EEGLAB_Plugin" folder, and follow the readme file in CudaICA1.1 folder. You need to replace or modify EEGLAB's default "pop_runica.m" to let CUDAICA be callable from GUI and command line. It should be run on Windows 7 and above.
 
 After installation, I recommend to do a numerical test to show that CUDAICA and EEGLAB's RUNICA should behave the same when the randomness in the algorithm are controlled. The detailed steps are in the "numerical_test" folder.
 
