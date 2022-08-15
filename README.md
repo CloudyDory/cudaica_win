@@ -13,7 +13,7 @@ The source code is adapted from <https://github.com/fraimondo/cudaica> to build 
    
    However, you may need java development environment if you want to log CUDA occupation status with Nsight Systems.
             
-          recommended link -> https://github.com/openjdk/jdk
+      recommended link -> https://github.com/openjdk/jdk
       
    For normal users (recommeded for most people): Install only the CUDA runitme and latest drivers.
    
@@ -82,4 +82,4 @@ CUDAICA for Windows has been tested in the following machine environment:
 7. Windows 10 21H2, NVIDIA GTX 1050Ti, CUDA 11.6
 8. Windows 11 21H2, NVIDIA RTX 3070Ti, CUDA 11.7
 
-Last change: 2022/04/23
+Last change: 2022/08/15
